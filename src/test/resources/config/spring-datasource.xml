@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+    http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.1.xsd
+	http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+    http://www.springframework.org/schema/aop 
+    http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+	http://www.springframework.org/schema/data/jpa
+    http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd">
+    
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan">
+			<array>
+				<value>com.hkesports.matchticker.model</value>
+			</array>
+		</property>
+		<property name="jpaVendorAdapter">
+  			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+ 		</property>
+ 		<property name="jpaProperties">
+	  		<props>
+	   			<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+	   			<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.cglib.use_reflection_optimizer">true</prop>
+				<prop key="hibernate.use_sql_comments">true</prop>
+				<prop key="hibernate.jdbc.fetch_size">100</prop>
+				<prop key="hibernate.jdbc.batch_size">50</prop>
+	  		</props>
+	 	</property>
+	</bean>
+	
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+ 		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+    
+    <tx:annotation-driven transaction-manager="transactionManager" />
+	<aop:aspectj-autoproxy/>
+	
+	<context:component-scan base-package="com.hkesports.matchticker.service" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+	</context:component-scan>
+	
+	<jpa:repositories base-package="com.hkesports.matchticker.repository" entity-manager-factory-ref="entityManagerFactory"  
+		factory-class="com.hkesports.matchticker.repository.factory.GenericRepositoryFactoryBean" />
+
+	<beans profile="development">
+		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+			<property name="driverClass" value="${jdbc.connection.driver_class}" />
+			<property name="jdbcUrl" value="${jdbc.connection.url}" />
+			<property name="user" value="${jdbc.connection.username}" />
+			<property name="password" value="${jdbc.connection.password}" />
+			<property name="autoCommitOnClose" value="false" />
+			<property name="checkoutTimeout" value="5000" />
+			<property name="maxStatements" value="100" />
+			<property name="initialPoolSize" value="10" />
+			<property name="minPoolSize" value="10" />
+			<property name="maxPoolSize" value="100" />
+			<property name="maxIdleTime" value="0" />
+			<property name="maxIdleTimeExcessConnections" value="120" />
+			<property name="idleConnectionTestPeriod" value="120" />
+			<property name="acquireIncrement" value="3" />
+			<property name="acquireRetryDelay" value="1000" />
+			<property name="acquireRetryAttempts" value="30" />
+			<property name="breakAfterAcquireFailure" value="false" />
+			<property name="testConnectionOnCheckout" value="false" />
+			<property name="unreturnedConnectionTimeout" value="1200" />
+			<property name="debugUnreturnedConnectionStackTraces" value="true" />
+			<property name="numHelperThreads" value="6" />
+		</bean>
+	</beans>
+
+	<beans profile="production">
+		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+			<property name="driverClass" value="${jdbc.connection.driver_class.production}" />
+			<property name="jdbcUrl" value="${jdbc.connection.url.production}" />
+			<property name="user" value="${jdbc.connection.username.production}" />
+			<property name="password" value="${jdbc.connection.password.production}" />
+			<property name="autoCommitOnClose" value="false" />
+			<property name="checkoutTimeout" value="5000" />
+			<property name="maxStatements" value="100" />
+			<property name="initialPoolSize" value="10" />
+			<property name="minPoolSize" value="10" />
+			<property name="maxPoolSize" value="100" />
+			<property name="maxIdleTime" value="0" />
+			<property name="maxIdleTimeExcessConnections" value="120" />
+			<property name="idleConnectionTestPeriod" value="120" />
+			<property name="acquireIncrement" value="3" />
+			<property name="acquireRetryDelay" value="1000" />
+			<property name="acquireRetryAttempts" value="30" />
+			<property name="breakAfterAcquireFailure" value="false" />
+			<property name="testConnectionOnCheckout" value="false" />
+			<property name="unreturnedConnectionTimeout" value="1200" />
+			<property name="debugUnreturnedConnectionStackTraces" value="true" />
+			<property name="numHelperThreads" value="6" />
+		</bean>
+	</beans>
+</beans>

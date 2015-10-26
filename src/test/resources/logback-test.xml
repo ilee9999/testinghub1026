@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/2002/xmlspec/dtd/2.10/xmlspec.dtd">
+
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[%p][%C-%M] -&gt; %m%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="DEBUGLOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>./logs/debug.log</File>
+		<encoder>
+			<pattern>%d{yy-MM-dd HH:mm:ss:SSS}[%p][%C-%M] -&gt; %m%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>DEBUG</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<minIndex>1</minIndex>   
+      		<maxIndex>100</maxIndex>
+			<FileNamePattern>./logs/debug.log.%i</FileNamePattern>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>20MB</MaxFileSize>
+		</triggeringPolicy>
+	</appender>
+	
+	<appender name="INFOLOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>./logs/info.log</File>
+		<encoder>
+			<pattern>%d{yy-MM-dd HH:mm:ss:SSS}[%p][%C-%M] -&gt; %m%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<minIndex>1</minIndex>   
+      		<maxIndex>100</maxIndex>
+			<FileNamePattern>./logs/info.log.%i</FileNamePattern>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>20MB</MaxFileSize>
+		</triggeringPolicy>
+	</appender>
+	
+	<appender name="WARNLOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender -->
+		<File>./logs/warn.log</File>
+		<encoder>
+			<pattern>%d{yy-MM-dd HH:mm:ss:SSS}[%p][%C-%M] -&gt; %m%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<minIndex>1</minIndex>   
+      		<maxIndex>100</maxIndex>
+			<FileNamePattern>./logs/warn.log.%i</FileNamePattern>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>20MB</MaxFileSize>
+		</triggeringPolicy>
+	</appender>
+	
+	<appender name="ERRORLOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>./logs/error.log</File>
+		<encoder>
+			<pattern>%d{yy-MM-dd HH:mm:ss:SSS}[%p][%C-%M] -&gt; %m%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<minIndex>1</minIndex>   
+      		<maxIndex>100</maxIndex>
+			<FileNamePattern>./logs/error.log.%i</FileNamePattern>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>20MB</MaxFileSize>
+		</triggeringPolicy>
+	</appender>
+	
+	<appender name="SQLLOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>./logs/hbsql.log</File>
+		<encoder>
+			<pattern>%d{yy-MM-dd HH:mm:ss:SSS}[%p][%C-%M] -&gt; %m%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<minIndex>1</minIndex>   
+      		<maxIndex>100</maxIndex>
+			<FileNamePattern>./logs/hbsql.log.%i.zip</FileNamePattern>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>20MB</MaxFileSize>
+		</triggeringPolicy>
+	</appender>
+	
+	<logger name="org.hibernate.SQL" level="ERROR" additivity="false">
+		<appender-ref ref="SQLLOG" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+	
+	<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="ERROR" additivity="false">
+		<appender-ref ref="SQLLOG" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+	<logger name="org.hibernate.engine.transaction" level="ERROR" additivity="false">
+		<appender-ref ref="SQLLOG" />
+		<appender-ref ref="CONSOLE" />
+	</logger>
+	<logger name="com.hkesports.matchticker.service.lol" level="INFO" />
+	
+	<root level="INFO">
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="DEBUGLOG" />
+		<appender-ref ref="INFOLOG" />
+		<appender-ref ref="WARNLOG" />
+		<appender-ref ref="ERRORLOG" />
+	</root>
+</configuration>
